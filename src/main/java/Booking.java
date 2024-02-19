@@ -18,6 +18,10 @@ public class Booking {
         this.roomNights = roomNights;
     }
 
+    public Booking()  {
+        // Null constructor
+    }
+
     public void printBooking() {
         System.out.println();
         System.out.println("============= Booking " + bookingID + " ==============");

@@ -48,6 +48,18 @@ public class JDBCManager {
         }
     }
 
+    public void emptyDatabase(Connection conn) {
+        String sql = "DELETE * FROM Bookings";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            int insertedRows = pstmt.executeUpdate();
+            System.out.println("[SUCCESS] Inserted " + insertedRows + " rows into database.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred filling the database.");
+        }
+    }
+
     public void parseBookingsFile(File bookingsFile) {
         try{
             SAXParserFactory factory = SAXParserFactory.newInstance();
