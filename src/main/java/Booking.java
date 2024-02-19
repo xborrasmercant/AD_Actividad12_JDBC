@@ -1,3 +1,4 @@
+import java.sql.ResultSet;
 
 public class Booking {
     private String bookingID, clientID, agencyID, roomID, hotelID, clientName, agencyName, hotelName, checkIn;
@@ -35,6 +36,28 @@ public class Booking {
         System.out.println();
     }
 
+
+    public static Booking convertBooking(ResultSet resultSet) {
+        Booking booking = null;
+        try {
+            booking = new Booking(
+                    resultSet.getString("ookingID"),
+                    resultSet.getString("clientID"),
+                    resultSet.getString("agencyID"),
+                    resultSet.getDouble("price"),
+                    resultSet.getString("roomType"),
+                    resultSet.getString("hotelID"),
+                    resultSet.getString("clientName"),
+                    resultSet.getString("agencyName"),
+                    resultSet.getString("hotelName"),
+                    resultSet.getString("check_in"),
+                    resultSet.getInt("room_nights"));
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error converting booking from database.");
+        }
+
+        return booking;
+    }
     public String getRoomType(String roomID) {
         return switch (roomID) {
             case "1" -> "Double";

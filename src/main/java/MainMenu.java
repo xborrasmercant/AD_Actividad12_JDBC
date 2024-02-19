@@ -2,7 +2,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public static class MainMenu {
+public class MainMenu {
     ArrayList<Booking> bookingsCollection = new ArrayList<>();
     static Connection conn;
     static JDBCManager jdbc;

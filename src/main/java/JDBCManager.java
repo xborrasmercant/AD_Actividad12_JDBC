@@ -1,17 +1,14 @@
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Vector;
 
 public class JDBCManager {
     private Vector<Booking> bookingsCollection;
 
     public JDBCManager() {
-        parseBookingsFile(new File("src/bookings.xml"));
+        this.bookingsCollection = parseBookingsFile(new File("src/main/resources/bookings.xml"));
     }
 
     public Connection connectToDatabase(String url, String user, String pwd) throws SQLException {
@@ -60,14 +57,39 @@ public class JDBCManager {
         }
     }
 
-    public void parseBookingsFile(File bookingsFile) {
+    public void getBookingInfo(Connection conn, String bookingId) {
+        String sql = "SELECT * FROM Bookings WHERE BookingID = ?";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, bookingId);
+            ResultSet resultSet = pstmt.executeQuery();
+            Booking b = Booking.convertBooking(resultSet);
+
+            b.printBooking();
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred while getting booking info.");
+        }
+    }
+
+    public static boolean bookingExists(String bookingID) {
+        for (Booking booking : parseBookingsFile(new File("src/main/resources/bookings.xml"))) {
+            if (booking.getBookingID().equals(bookingID)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static Vector<Booking> parseBookingsFile(File bookingsFile) {
         try{
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             XMLSaxHandler SAXHandler = new XMLSaxHandler()   ;
             parser.parse(bookingsFile, SAXHandler);
 
-            bookingsCollection = SAXHandler.getBookingsCollection(); // The bookings collection is retrieved after being fully parsed
+            return SAXHandler.getBookingsCollection(); // The bookings collection is retrieved after being fully parsed
         }
         catch (Exception e) {
             e.printStackTrace();
