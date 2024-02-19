@@ -1,4 +1,7 @@
 import java.sql.ResultSet;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 
 public class Booking {
     private String bookingID, clientID, agencyID, roomID, hotelID, clientName, agencyName, hotelName, checkIn;
@@ -36,12 +39,11 @@ public class Booking {
         System.out.println();
     }
 
-
     public static Booking convertBooking(ResultSet resultSet) {
         Booking booking = null;
         try {
             booking = new Booking(
-                    resultSet.getString("ookingID"),
+                    resultSet.getString("bookingID"),
                     resultSet.getString("clientID"),
                     resultSet.getString("agencyID"),
                     resultSet.getDouble("price"),
@@ -66,6 +68,63 @@ public class Booking {
             case "4" -> "Suite";
             default -> "";
         };
+    }
+
+    public static Booking createNewBooking() {
+        Scanner in = new Scanner(System.in);
+
+        System.out.print("Booking ID: ");
+        String bookingID = in.nextLine();
+
+        System.out.print("Client ID: ");
+        String clientID = in.nextLine();
+
+        System.out.print("Agency ID: ");
+        String agencyID = in.nextLine();
+
+        double price = 0.0;
+        while (price == 0.0) {
+            System.out.print("Price: ");
+            try {
+                price = in.nextDouble();
+                in.nextLine(); // Clear buffer
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid price.");
+                in.nextLine(); // Clear the invalid input
+            }
+        }
+
+        System.out.print("Room ID: ");
+        String roomID = in.nextLine();
+
+        System.out.print("Hotel ID: ");
+        String hotelID = in.nextLine();
+
+        System.out.print("Client Name: ");
+        String clientName = in.nextLine();
+
+        System.out.print("Agency Name: ");
+        String agencyName = in.nextLine();
+
+        System.out.print("Hotel Name: ");
+        String hotelName = in.nextLine();
+
+        System.out.print("Check-In Date (YYYY-MM-DD): ");
+        String checkIn = in.nextLine();
+
+        int roomNights = 0;
+        while (roomNights == 0) {
+            System.out.print("Room Nights: ");
+            try {
+                roomNights = in.nextInt();
+                in.nextLine(); // Clear buffer
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number of room nights.");
+                in.nextLine(); // Clear the invalid input
+            }
+        }
+
+        return new Booking(bookingID, clientID, agencyID, price, roomID, hotelID, clientName, agencyName, hotelName, checkIn, roomNights);
     }
 
     public String getBookingID() {

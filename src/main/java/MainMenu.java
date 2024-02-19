@@ -9,13 +9,14 @@ public class MainMenu {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        String i;
+        String option;
 
         // CONNECT TO DATABASE
         try {
             conn = jdbc.connectToDatabase("jdbc:mysql://localhost:3306/actividad11_jdbc", "root", "");
         } catch (Exception e) {
             System.out.println("[ERROR] Can't establish connection to the database: " + e.getMessage());
+            System.exit(0);
         }
 
         // Main menu
@@ -34,22 +35,35 @@ public class MainMenu {
             System.out.println("===============================");
 
             System.out.print("Enter an option please (1-3): ");
-            i = input.nextLine();
+            option = input.nextLine();
             System.out.println("-------------------------------");
 
-            switch (i) {
-                case "1":
-                    jdbc.fillDatabase(conn);
-                    break;
-                case "2":
-
-                    break;
-                case "6":
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid option. Please, try again.");
-                    break;
+            switch (option) {
+                case "1" -> jdbc.fillDatabase(conn);
+                case "2" -> jdbc.emptyDatabase(conn);
+                case "3" -> {
+                    System.out.print("Enter Booking ID to show info: ");
+                    String bookingId = input.nextLine();
+                    jdbc.getBookingInfo(conn, bookingId);
+                }
+                case "4" -> {
+                    System.out.print("Enter Agency ID to show bookings: ");
+                    String agencyId = input.nextLine();
+                    jdbc.getAgencyBookings(conn, agencyId);
+                }
+                case "5" -> jdbc.insertBooking(conn);
+                case "6" -> {
+                    System.out.print("Enter Booking ID to delete: ");
+                    String bookingId = input.nextLine();
+                    jdbc.deleteBooking(conn, bookingId);
+                }
+                case "7" -> {
+                    System.out.print("Enter Booking ID to modify: ");
+                    String bookingId = input.nextLine();
+                    jdbc.modifyBooking(conn, bookingId);
+                }
+                case "8" -> System.exit(0);
+                default -> System.out.println("Invalid option. Please, try again.");
             }
         }
     }
