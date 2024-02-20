@@ -117,7 +117,7 @@ public class JDBCManager {
         try {
             String sql = "INSERT INTO Bookings VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, STR_TO_DATE(?, '%d/%m/%Y'), ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            Booking b = Booking.createNewBooking();
+            Booking b = Booking.createNewBooking(Booking.Type.NEW);
 
             // Exit function if booking already exists
             if (bookingExists(conn, b.getBookingID())) {
@@ -155,7 +155,7 @@ public class JDBCManager {
 
         // Try deletion
         try {
-            String sql = "DELETE * FROM Bookings WHERE BookingID = ?";
+            String sql = "DELETE FROM Bookings WHERE BookingID = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, bookingID);
 
@@ -174,9 +174,9 @@ public class JDBCManager {
 
         // Try update
         try {
-            String sql = "UPDATE Bookings SET clientID = ?, agencyID = ?, price = ?, roomType = ?, hotelID = ?, clientName = ?, agencyName = ?, hotelName = ?, check_in = ?, room_nights = ? WHERE BookingID = ?)";
+            String sql = "UPDATE Bookings SET clientID = ?, agencyID = ?, price = ?, roomType = ?, hotelID = ?, clientName = ?, agencyName = ?, hotelName = ?, check_in = ?, room_nights = ? WHERE BookingID = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            Booking b = Booking.createNewBooking();
+            Booking b = Booking.createNewBooking(Booking.Type.UPDATE);
             b.setBookingID(bookingID); // Set correct booking id to newly created booking
 
             pstmt.setString(1, b.getClientID());
@@ -213,7 +213,7 @@ public class JDBCManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred while checking if booking '" + bookingID + "' exits: " + e.getMessage());
+            System.out.println("[ERROR] An unexpected error occurred while checking if booking '" + bookingID + "' exists: " + e.getMessage());
         }
 
         return false;
@@ -233,7 +233,7 @@ public class JDBCManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred while checking if booking '" + bookingID + "' exits: " + e.getMessage());
+            System.out.println("[ERROR] An unexpected error occurred while checking if agency '" + agencyID + "' exists: " + e.getMessage());
         }
 
         return false;

@@ -7,6 +7,10 @@ public class Booking {
     private String bookingID, clientID, agencyID, roomID, hotelID, clientName, agencyName, hotelName, checkIn;
     private Double price;
     private int roomNights;
+    public enum Type {
+        NEW,
+        UPDATE
+    }
 
     public Booking(String bookingID, String clientID, String agencyID, Double price, String roomID, String hotelID, String clientName, String agencyName, String hotelName, String checkIn, int roomNights) {
         this.bookingID = bookingID;
@@ -70,11 +74,14 @@ public class Booking {
         };
     }
 
-    public static Booking createNewBooking() {
+    public static Booking createNewBooking(Type btype) {
         Scanner in = new Scanner(System.in);
+        String bookingID = "0";
 
-        System.out.print("Booking ID: ");
-        String bookingID = in.nextLine();
+        if (btype == Type.NEW) {
+            System.out.print("Booking ID: ");
+             bookingID = in.nextLine();
+        }
 
         System.out.print("Client ID: ");
         String clientID = in.nextLine();
