@@ -34,7 +34,7 @@ public class MainMenu {
             System.out.println("8. Exit");
             System.out.println("===============================");
 
-            System.out.print("Enter an option please (1-3): ");
+            System.out.print("Enter an option please (1-8): ");
             option = input.nextLine();
             System.out.println("-------------------------------");
 

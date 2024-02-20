@@ -55,7 +55,7 @@ public class Booking {
                     resultSet.getString("check_in"),
                     resultSet.getInt("room_nights"));
         } catch (Exception e) {
-            System.out.println("[ERROR] Error converting booking from database.");
+            System.out.println("[ERROR] Error converting booking from database: " + e.getMessage());
         }
 
         return booking;
@@ -109,7 +109,7 @@ public class Booking {
         System.out.print("Hotel Name: ");
         String hotelName = in.nextLine();
 
-        System.out.print("Check-In Date (YYYY-MM-DD): ");
+        System.out.print("Check-In Date (DD/MM/YYYY): ");
         String checkIn = in.nextLine();
 
         int roomNights = 0;

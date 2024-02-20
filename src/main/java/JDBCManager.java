@@ -19,10 +19,11 @@ public class JDBCManager {
 
     // CRUD Methods
     public void fillDatabase(Connection conn) {
+        int insertedRows = 0;
 
         // Try fill
         try {
-            String sql = "INSERT INTO Bookings VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Bookings VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, STR_TO_DATE(?, '%d/%m/%Y'), ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             System.out.println("[ACTION] Inserting rows into database...");
 
@@ -38,9 +39,11 @@ public class JDBCManager {
                 pstmt.setString(9, b.getHotelName());
                 pstmt.setString(10, b.getCheckIn());
                 pstmt.setInt(11, b.getRoomNights());
+
+                insertedRows += pstmt.executeUpdate();
+
             }
 
-            int insertedRows = pstmt.executeUpdate();
             System.out.println("[SUCCESS] Inserted " + insertedRows + " rows into database.");
 
 
@@ -52,10 +55,10 @@ public class JDBCManager {
 
         // Try deletion
         try {
-            String sql = "DELETE * FROM Bookings";
+            String sql = "DELETE FROM Bookings";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             int insertedRows = pstmt.executeUpdate();
-            System.out.println("[SUCCESS] Inserted " + insertedRows + " rows into database.");
+            System.out.println("[SUCCESS] Deleted " + insertedRows + " rows into database.");
         } catch (Exception e) {
             System.out.println("[ERROR] An unexpected error occurred filling the database: " + e.getMessage());
         }
@@ -63,18 +66,19 @@ public class JDBCManager {
     public void getBookingInfo(Connection conn, String bookingID) {
 
         // Exit function if booking not exists
-        if (!bookingExists(bookingID)) {
+        if (!bookingExists(conn, bookingID)) {
             System.out.println("[ERROR] Booking with id '" + bookingID + "' does not exists.");
             return;
         }
 
-        // Try deletion
+        // Try selection
         try {
             String sql = "SELECT * FROM Bookings WHERE BookingID = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, bookingID);
 
             ResultSet resultSet = pstmt.executeQuery();
+            resultSet.next();
             Booking b = Booking.convertBooking(resultSet);
 
             b.printBooking();
@@ -85,7 +89,7 @@ public class JDBCManager {
     public void getAgencyBookings(Connection conn, String agencyID) {
 
         // Exit function if booking not exists
-        if (!bookingExists(agencyID)) {
+        if (!agencyExists(conn, agencyID)) {
             System.out.println("[ERROR] Agency with id '" + agencyID + "' does not exists.");
             return;
         }
@@ -111,9 +115,15 @@ public class JDBCManager {
 
         // Try insertion
         try {
-            String sql = "INSERT INTO Bookings VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Bookings VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, STR_TO_DATE(?, '%d/%m/%Y'), ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             Booking b = Booking.createNewBooking();
+
+            // Exit function if booking already exists
+            if (bookingExists(conn, b.getBookingID())) {
+                System.out.println("[ERROR] Booking with id '" + b.getBookingID() + "' already exists.");
+                return;
+            }
 
             pstmt.setString(1, b.getBookingID());
             pstmt.setString(2, b.getClientID());
@@ -138,7 +148,7 @@ public class JDBCManager {
     public void deleteBooking(Connection conn, String bookingID) {
 
         // Exit function if booking not exists
-        if (!bookingExists(bookingID)) {
+        if (!bookingExists(conn, bookingID)) {
             System.out.println("[ERROR] Booking with id '" + bookingID + "' does not exists.");
             return;
         }
@@ -157,7 +167,7 @@ public class JDBCManager {
     }
     public void modifyBooking(Connection conn, String bookingID) {
         // Exit function if booking not exists
-        if (!bookingExists(bookingID)) {
+        if (!bookingExists(conn, bookingID)) {
             System.out.println("[ERROR] Booking with id '" + bookingID + "' does not exists.");
             return;
         }
@@ -189,11 +199,41 @@ public class JDBCManager {
     }
 
     // OTHER Methods
-    public static boolean bookingExists(String bookingID) {
-        for (Booking booking : parseBookingsFile(new File("src/main/resources/bookings.xml"))) {
-            if (booking.getBookingID().equals(bookingID)) {
-                return true;
+    public static boolean bookingExists(Connection conn, String bookingID) {
+
+        try {
+            String sql = "SELECT * FROM Bookings";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            while (resultSet.next()) {
+                Booking b = Booking.convertBooking(resultSet);
+                if (b.getBookingID().equals(bookingID)) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred while checking if booking '" + bookingID + "' exits: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    public static boolean agencyExists(Connection conn, String agencyID) {
+
+        try {
+            String sql = "SELECT * FROM Bookings";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            while (resultSet.next()) {
+                Booking b = Booking.convertBooking(resultSet);
+                if (b.getAgencyID().equals(agencyID)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred while checking if booking '" + bookingID + "' exits: " + e.getMessage());
         }
 
         return false;
