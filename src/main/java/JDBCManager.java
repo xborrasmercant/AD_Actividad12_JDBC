@@ -45,7 +45,7 @@ public class JDBCManager {
 
 
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred filling the database.");
+            System.out.println("[ERROR] An unexpected error occurred filling the database: " + e.getMessage());
         }
     }
     public void emptyDatabase(Connection conn) {
@@ -57,7 +57,7 @@ public class JDBCManager {
             int insertedRows = pstmt.executeUpdate();
             System.out.println("[SUCCESS] Inserted " + insertedRows + " rows into database.");
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred filling the database.");
+            System.out.println("[ERROR] An unexpected error occurred filling the database: " + e.getMessage());
         }
     }
     public void getBookingInfo(Connection conn, String bookingID) {
@@ -79,7 +79,7 @@ public class JDBCManager {
 
             b.printBooking();
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred while getting booking info.");
+            System.out.println("[ERROR] An unexpected error occurred while getting booking info: " + e.getMessage());
         }
     }
     public void getAgencyBookings(Connection conn, String agencyID) {
@@ -104,7 +104,7 @@ public class JDBCManager {
             }
 
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred while getting agency " + agencyID + " bookings.");
+            System.out.println("[ERROR] An unexpected error occurred while getting agency " + agencyID + " bookings: " + e.getMessage());
         }
     }
     public void insertBooking(Connection conn) {
@@ -132,7 +132,7 @@ public class JDBCManager {
 
 
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred inserting the booking into the database.");
+            System.out.println("[ERROR] An unexpected error occurred inserting the booking into the database: " + e.getMessage());
         }
     }
     public void deleteBooking(Connection conn, String bookingID) {
@@ -152,7 +152,7 @@ public class JDBCManager {
             int insertedRows = pstmt.executeUpdate();
             System.out.println("[SUCCESS] Deleted booking with ID '" + bookingID + "'.");
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred deleting booking '" + bookingID + "'.");
+            System.out.println("[ERROR] An unexpected error occurred deleting booking '" + bookingID + "': " + e.getMessage() );
         }
     }
     public void modifyBooking(Connection conn, String bookingID) {
@@ -184,7 +184,7 @@ public class JDBCManager {
             pstmt.executeUpdate();
             System.out.println("[SUCCESS] Updated booking '" + bookingID + "' into database.");
         } catch (Exception e) {
-            System.out.println("[ERROR] An unexpected error occurred updated booking '"+ bookingID +"' into the database.");
+            System.out.println("[ERROR] An unexpected error occurred updated booking '"+ bookingID +"' into the database: " + e.getMessage());
         }
     }
 
@@ -208,7 +208,7 @@ public class JDBCManager {
             bookings = SAXHandler.getBookingsCollection(); // The bookings collection is retrieved after being fully parsed
         }
         catch (Exception e) {
-            System.out.println("[ERROR] File '"+ bookingsFile.getName() + "' parsing failed unexpectedly");
+            System.out.println("[ERROR] File '"+ bookingsFile.getName() + "' parsing failed unexpectedly: " + e.getMessage());
         }
         return bookings;
     }
