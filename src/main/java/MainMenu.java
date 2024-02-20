@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class MainMenu {
     ArrayList<Booking> bookingsCollection = new ArrayList<>();
     static Connection conn;
-    static JDBCManager jdbc;
+    static JDBCManager jdbc = new JDBCManager();
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
